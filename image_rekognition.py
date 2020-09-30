@@ -37,7 +37,7 @@ class Rekognition(QWidget):
                     .format(self.outcomes['gender'], self.outcomes['age'],
                     emotion, features),self)
         l2 = QLabel(self)
-        
+
         l1.setAlignment(Qt.AlignCenter)
         l2.setAlignment(Qt.AlignCenter)
         l2.setPixmap(QPixmap(self.outcomes['img']).scaled(400, 400, Qt.KeepAspectRatio, Qt.FastTransformation))
@@ -71,33 +71,36 @@ class Rekognition(QWidget):
                     responses = client.detect_faces(Image ={
                         'Bytes':img_file.read()
                     }, Attributes = ['ALL'])
-
-                    for response in responses['FaceDetails']:
-                        gender = response['Gender']['Value']
-                        age = str(response['AgeRange']['Low']) + ' - ' + str(response['AgeRange']['High'])
-                        emotions = dict()
-                        for emotion in response['Emotions']:
-                            emotions[emotion['Type']] = emotion['Confidence']
-                        # max_val = max(emotions.values())
-                        # print(max_val)
-                        emotion_present = []
-                        for key, value in emotions.items():
-                            if value >= 75:
-                                emotion_present.append(key)
-        
-                        features = ['Eyeglasses', 'Sunglasses', 'Beard', 'Mustache']
-                        features_present  = []
-                        for f in features:
-                            if response[f]['Value']:
-                                features_present.append(f)
-                        
-                        return {
-                            'gender' : gender,
-                            'age' : age,
-                            'emotion' : emotion_present,
-                            'features' : features_present,
-                            'img' : image
-                        }
+                    if len(responses['FaceDetails']) > 0:
+                        for response in responses['FaceDetails']:
+                            gender = response['Gender']['Value']
+                            age = str(response['AgeRange']['Low']) + ' - ' + str(response['AgeRange']['High'])
+                            emotions = dict()
+                            for emotion in response['Emotions']:
+                                emotions[emotion['Type']] = emotion['Confidence']
+                            # max_val = max(emotions.values())
+                            # print(max_val)
+                            emotion_present = []
+                            for key, value in emotions.items():
+                                if value >= 75:
+                                    emotion_present.append(key)
+            
+                            features = ['Eyeglasses', 'Sunglasses', 'Beard', 'Mustache']
+                            features_present  = []
+                            for f in features:
+                                if response[f]['Value']:
+                                    features_present.append(f)
+                            
+                            return {
+                                'gender' : gender,
+                                'age' : age,
+                                'emotion' : emotion_present,
+                                'features' : features_present,
+                                'img' : image
+                            }
+                    else:
+                        print('No features detected')
+                        return 1
                         
             else:
                 print("The give file is not an image file")
