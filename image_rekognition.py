@@ -40,7 +40,7 @@ class Rekognition(QWidget):
         
         l1.setAlignment(Qt.AlignCenter)
         l2.setAlignment(Qt.AlignCenter)
-        l2.setPixmap(QPixmap(self.outcomes['img']))
+        l2.setPixmap(QPixmap(self.outcomes['img']).scaled(400, 400, Qt.KeepAspectRatio, Qt.FastTransformation))
 
         #Set vertical layout for widgets where widgets will be placed one after another below it
         vbox = QVBoxLayout(self)
